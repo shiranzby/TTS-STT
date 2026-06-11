@@ -39,13 +39,24 @@
 
 <p align="center">
   <a href="https://tts.shy2958779577.workers.dev">
-    <img src="screenshots/demo-tts.png" alt="文字转语音界面" width="45%">
+    <img src="screenshots/demo-tts.png" alt="文字转语音界面" width="80%">
   </a>
+</p>
+<p align="center">
+  <sub>📌 文字转语音（TTS）界面 — 支持手动输入 / 文件上传 / 批量处理</sub>
+</p>
+
+<p align="center">
   <a href="https://tts.shy2958779577.workers.dev">
-    <img src="screenshots/demo-stt.png" alt="语音转文字界面" width="45%">
+    <img src="screenshots/demo-stt.png" alt="语音转文字界面" width="80%">
   </a>
-  <br>
-  <sub>📸 点击图片体验 demo · 支持日/夜模式 · 8 国语言</sub>
+</p>
+<p align="center">
+  <sub>📌 语音转文字（STT）界面 — 支持多文件批量转录 / 展开全文 / 一键导出</sub>
+</p>
+
+<p align="center">
+  <sub>💡 点击图片体验 demo · 支持日/夜模式 · 8 国语言</sub>
 </p>
 
 > 💡 **一键部署**：点击下方按钮即可将 Shiran Voice 部署到你自己的 Cloudflare 账号
