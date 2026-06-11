@@ -50,7 +50,7 @@
 
 > 💡 **一键部署**：点击下方按钮即可将 Shiran Voice 部署到你自己的 Cloudflare 账号
 >
-> <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/shiranzby/TTS-STT"><img src="https://img.shields.io/badge/🚀-Deploy_to_Cloudflare_Workers-0891b2?style=for-the-badge&logo=cloudflare" alt="Deploy to Cloudflare Workers"></a>
+> <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/shiranzby/TTS-STT"><img src="screenshots/deploy-button.svg" alt="Deploy to Cloudflare Workers"></a>
 
 ---
 
@@ -119,47 +119,9 @@ npx wrangler secret put SILICONFLOW_TOKEN
 
 ### 整体架构
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                          浏览器 (前端)                            │
-│  ┌────────────┐  ┌────────────┐  ┌──────────────────────────┐   │
-│  │  文本输入   │  │  文件上传   │  │    批量多文件处理         │   │
-│  │  (textarea) │  │ 拖拽/选择   │  │  逐个/追加/进度/重试     │   │
-│  └─────┬──────┘  └─────┬──────┘  └───────────┬──────────────┘   │
-│        └───────────────┼─────────────────────┘                  │
-│                        ▼                                        │
-│          POST /v1/audio/speech   (JSON / multipart)              │
-│          POST /v1/audio/transcriptions  (multipart)              │
-└─────────────────────────┬────────────────────────────────────────┘
-                          │
-                          ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                    Cloudflare Worker (边缘计算)                    │
-│                                                                   │
-│  ┌────────────────────────┐       ┌──────────────────────────┐   │
-│  │     TTS 合成引擎        │       │    STT 识别引擎          │   │
-│  │                        │       │                          │   │
-│  │  文本 → optimizedTextSplit()  │       │  音频 → 格式验证    │   │
-│  │        ↓                │       │        ↓                │   │
-│  │  (每块 ≤1500字符)       │       │  转发硅基流动 API       │   │
-│  │        ↓                │       │   (SenseVoiceSmall)     │   │
-│  │  每批3块 并行请求EdgeTTS │       │        ↓                │   │
-│  │  (块间200ms/批间800ms)  │       │  清洗特殊标记 + emoji   │   │
-│  │        ↓                │       │        ↓                │   │
-│  │  合并所有 MP3 分片       │       │  返回 JSON 文本          │   │
-│  └──────────┬─────────────┘       └───────────┬──────────────┘   │
-│             │                                 │                  │
-└─────────────┼─────────────────────────────────┼──────────────────┘
-              │                                 │
-              ▼                                 ▼
-      ┌──────────────┐                  ┌──────────────┐
-      │  MP3 音频流   │                  │  JSON 文本    │
-      └──────┬───────┘                  └──────┬───────┘
-             │                                 │
-             ▼                                 ▼
-      ▶ 在线播放 / 📥 下载              📋 复制 / 📥 下载 TXT
-      📦 批量下载全部                   🔍 展开查看全文
-```
+<p align="center">
+  <img src="screenshots/architecture.jpg" alt="Shiran Voice 技术架构" width="100%">
+</p>
 
 ### API 调用流程
 
@@ -292,7 +254,9 @@ TTS-STT/
 │   └── worker_base.js        # 旧版 Worker（参考）
 ├── screenshots/
 │   ├── demo-tts.png          # TTS 界面截图
-│   └── demo-stt.png          # STT 界面截图
+│   ├── demo-stt.png          # STT 界面截图
+│   ├── architecture.jpg      # 技术架构图
+│   └── deploy-button.svg     # 一键部署按钮
 ├── build.js                  # 构建脚本（内联 HTML → Worker）
 ├── index.js                  # 构建产物（单文件 Worker）
 ├── package.json              # 项目配置
