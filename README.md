@@ -31,15 +31,32 @@
   <b>🌐 在线体验：</b><a href="https://tts.shy2958779577.workers.dev">demo</a>
 </p>
 
-<p align="center">
-
-| 文字转语音 | 语音转文字 | 批量处理 |
-|:---:|:---:|:---:|
-| 21 种中文语音 · 11 种风格 | mp3/wav/m4a 等格式 | 多文件拖拽 · 进度追踪 |
-| 语速/音调可调 | 支持自定义 API Token | 逐个下载 / 全部导出 |
-| 长文本自动分块并行合成 | 转录结果一键复制 | 🔄 失败重试 |
-
-</p>
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">文字转语音</th>
+      <th align="center">语音转文字</th>
+      <th align="center">批量处理</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">21 种中文语音 · 11 种风格</td>
+      <td align="center">mp3/wav/m4a 等格式</td>
+      <td align="center">多文件拖拽 · 进度追踪</td>
+    </tr>
+    <tr>
+      <td align="center">语速/音调可调</td>
+      <td align="center">支持自定义 API Token</td>
+      <td align="center">逐个下载 / 全部导出</td>
+    </tr>
+    <tr>
+      <td align="center">长文本自动分块并行合成</td>
+      <td align="center">转录结果一键复制</td>
+      <td align="center">🔄 失败重试</td>
+    </tr>
+  </tbody>
+</table>
 
 <p align="center">
   <a href="https://tts.shy2958779577.workers.dev">
