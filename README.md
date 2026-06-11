@@ -10,10 +10,12 @@
   <a href="https://tts.shy2958779577.workers.dev"><img src="https://img.shields.io/badge/demo-%E5%9C%A8%E7%BA%BF%E4%BD%93%E9%AA%8C-22d3ee" alt="Demo"></a>
   <img src="https://img.shields.io/badge/version-1.0.0-0891b2" alt="Version">
   <img src="https://img.shields.io/badge/platform-Cloudflare_Workers-orange" alt="Platform">
+  <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/shiranzby/TTS-STT"><img src="https://img.shields.io/badge/deploy-%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2-0891b2?logo=cloudflare" alt="Deploy"></a>
   <img src="https://img.shields.io/github/stars/shiranzby/TTS-STT?style=social" alt="Stars">
 </p>
 
 <p align="center">
+  <a href="#-在线体验">在线体验</a> ·
   <a href="#-快速开始">快速开始</a> ·
   <a href="#-技术架构">技术架构</a> ·
   <a href="#-API-文档">API 文档</a> ·
@@ -25,7 +27,9 @@
 
 ## 📺 在线体验
 
-> 🌐 **在线地址**：https://tts.shy2958779577.workers.dev
+<p align="center">
+  <b>🌐 在线体验：</b><a href="https://tts.shy2958779577.workers.dev">demo</a>
+</p>
 
 | 文字转语音 | 语音转文字 | 批量处理 |
 |:---:|:---:|:---:|
@@ -34,8 +38,19 @@
 | 长文本自动分块并行合成 | 转录结果一键复制 | 🔄 失败重试 |
 
 <p align="center">
-  <sub>💡 点击任意按钮切换日/夜模式 · 支持 8 种界面语言</sub>
+  <a href="https://tts.shy2958779577.workers.dev">
+    <img src="screenshots/demo-tts.png" alt="文字转语音界面" width="45%">
+  </a>
+  <a href="https://tts.shy2958779577.workers.dev">
+    <img src="screenshots/demo-stt.png" alt="语音转文字界面" width="45%">
+  </a>
+  <br>
+  <sub>📸 点击图片体验 demo · 支持日/夜模式 · 8 国语言</sub>
 </p>
+
+> 💡 **一键部署**：点击下方按钮即可将 Shiran Voice 部署到你自己的 Cloudflare 账号
+>
+> <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/shiranzby/TTS-STT"><img src="https://img.shields.io/badge/🚀-Deploy_to_Cloudflare_Workers-0891b2?style=for-the-badge&logo=cloudflare" alt="Deploy to Cloudflare Workers"></a>
 
 ---
 
@@ -43,10 +58,10 @@
 
 | 功能 | TTS（文字转语音） | STT（语音转文字） |
 |------|:---:|:---:|
-| **输入方式** | 手动输入 / .txt文件 / .md文件批量 | 音频文件拖拽 / 多文件批量 |
-| **语音/模型** | Microsoft Edge TTS (21种中文语音) | SiliconFlow SenseVoiceSmall |
+| **输入方式** | 手动输入 / .txt / .md 多文件批量 | 音频文件拖拽 / 多文件批量 |
+| **语音/模型** | Microsoft Edge TTS（21 种中文语音） | SiliconFlow SenseVoiceSmall |
 | **参数控制** | 语音选择 + 风格 + 语速 + 音调 | 默认 Token / 自定义 API Token |
-| **结果操作** | ▶ 在线播放 · 📥 下载MP3 | 📋 复制 · 📥 下载TXT · 🔍 展开全文 |
+| **结果操作** | ▶ 在线播放 · 📥 下载 MP3 | 📋 复制 · 📥 下载 TXT · 🔍 展开全文 |
 | **批量处理** | ✅ 多文件逐个生成 · 📦 全部下载 | ✅ 多文件并行转录 · 📦 全部导出 |
 | **断点续传** | ✅ 失败重试 · 已完成跳过 | ✅ 失败重试 · 已完成跳过 |
 | **文件限制** | 单文件最大 100MB，内部自动分块 | 单文件最大 100MB |
@@ -63,6 +78,10 @@
 
 ### 一键部署
 
+方法一：点击上方 **[🚀 Deploy to Cloudflare Workers]** 按钮，按向导完成。
+
+方法二：命令行部署
+
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/shiranzby/TTS-STT.git
@@ -74,9 +93,9 @@ npm install
 # 3. 构建（将前端 HTML 嵌入 Worker 代码）
 npm run build
 
-# 4. 部署到 Cloudflare Workers
-npx wrangler login        # 登录 Cloudflare 账号
-npx wrangler deploy       # 部署
+# 4. 登录并部署
+npx wrangler login
+npx wrangler deploy
 ```
 
 部署成功后终端会输出你的 Workers 域名：
@@ -98,48 +117,75 @@ npx wrangler secret put SILICONFLOW_TOKEN
 
 ## 🧱 技术架构
 
+### 整体架构
+
 ```
-┌─────────────────────────────────────────────────────┐
-│                   浏览器 (前端)                       │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │
-│  │ 文本输入  │  │ 文件上传  │  │ 批量多文件处理    │   │
-│  └────┬─────┘  └────┬─────┘  └───────┬──────────┘   │
-│       └──────────────┼────────────────┘              │
-│                      ▼                               │
-│            POST /v1/audio/speech                     │
-│            POST /v1/audio/transcriptions              │
-└──────────────────────┬──────────────────────────────┘
-                       │
-                       ▼
-┌──────────────────────────────────────────────────────┐
-│              Cloudflare Worker (边缘计算)              │
-│                                                       │
-│  ┌─────────────┐    ┌──────────────┐    ┌─────────┐ │
-│  │ Edge TTS    │    │ 文本自动分块  │    │ 硅基流动 │ │
-│  │ (微软语音)  │───→│ (≤1500字符)  │───→│ STT API │ │
-│  └──────┬──────┘    └──────┬───────┘    └────┬────┘ │
-│         │                  │                  │      │
-│         ▼                  ▼                  ▼      │
-│     MP3 音频        合并 MP3 流          JSON 文本    │
-└─────────┼──────────────────┼──────────────────┼──────┘
-          │                  │                  │
-          ▼                  ▼                  ▼
-      ▶ 在线播放         📥 批量下载        📋 复制文本
+┌──────────────────────────────────────────────────────────────────┐
+│                          浏览器 (前端)                            │
+│  ┌────────────┐  ┌────────────┐  ┌──────────────────────────┐   │
+│  │  文本输入   │  │  文件上传   │  │    批量多文件处理         │   │
+│  │  (textarea) │  │ 拖拽/选择   │  │  逐个/追加/进度/重试     │   │
+│  └─────┬──────┘  └─────┬──────┘  └───────────┬──────────────┘   │
+│        └───────────────┼─────────────────────┘                  │
+│                        ▼                                        │
+│          POST /v1/audio/speech   (JSON / multipart)              │
+│          POST /v1/audio/transcriptions  (multipart)              │
+└─────────────────────────┬────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    Cloudflare Worker (边缘计算)                    │
+│                                                                   │
+│  ┌────────────────────────┐       ┌──────────────────────────┐   │
+│  │     TTS 合成引擎        │       │    STT 识别引擎          │   │
+│  │                        │       │                          │   │
+│  │  文本 → optimizedTextSplit()  │       │  音频 → 格式验证    │   │
+│  │        ↓                │       │        ↓                │   │
+│  │  (每块 ≤1500字符)       │       │  转发硅基流动 API       │   │
+│  │        ↓                │       │   (SenseVoiceSmall)     │   │
+│  │  每批3块 并行请求EdgeTTS │       │        ↓                │   │
+│  │  (块间200ms/批间800ms)  │       │  清洗特殊标记 + emoji   │   │
+│  │        ↓                │       │        ↓                │   │
+│  │  合并所有 MP3 分片       │       │  返回 JSON 文本          │   │
+│  └──────────┬─────────────┘       └───────────┬──────────────┘   │
+│             │                                 │                  │
+└─────────────┼─────────────────────────────────┼──────────────────┘
+              │                                 │
+              ▼                                 ▼
+      ┌──────────────┐                  ┌──────────────┐
+      │  MP3 音频流   │                  │  JSON 文本    │
+      └──────┬───────┘                  └──────┬───────┘
+             │                                 │
+             ▼                                 ▼
+      ▶ 在线播放 / 📥 下载              📋 复制 / 📥 下载 TXT
+      📦 批量下载全部                   🔍 展开查看全文
 ```
 
-### TTS 工作流程
+### API 调用流程
 
-1. 接收文本 / 上传文件
-2. `optimizedTextSplit()` 按句子智能分割（每块 ≤ 1500 字符）
-3. 每批 3 块并行请求 Edge TTS（块间间隔 200ms，批次间隔 800ms）
-4. 合并所有 MP3 分片为单一音频流返回
-
-### STT 工作流程
-
-1. 接收音频文件（验证格式和大小）
-2. 转发至硅基流动 SenseVoiceSmall 模型
-3. 清洗响应文本（去除 `<|...|>` 特殊标记和 emoji）
-4. 返回纯文本结果
+```
+用户/外部系统
+     │
+     ├─── curl / 第三方客户端
+     │        │
+     │        ├── POST /v1/audio/speech  ──→  JSON 文本 ──→ 返回 MP3
+     │        │      Content-Type: application/json
+     │        │      {"input":"你好","voice":"Xiaoxiao",...}
+     │        │
+     │        ├── POST /v1/audio/speech  ──→ 文件上传 ──→ 返回 MP3
+     │        │      Content-Type: multipart/form-data
+     │        │      file=@text.txt + voice + speed + pitch + style
+     │        │
+     │        └── POST /v1/audio/transcriptions ──→ 音频文件 ──→ 返回 JSON
+     │               Content-Type: multipart/form-data
+     │               file=@audio.mp3 + token(可选)
+     │
+     └─── 浏览器 UI
+              │
+              ├── 文本框 / 文件拖拽 ──→ fetch API ──→ 处理响应
+              │
+              └── 批量多文件 ──→ 循环 fetch + 进度更新 ──→ 逐一下载 / 全部导出
+```
 
 ---
 
@@ -231,7 +277,7 @@ curl -X POST https://tts.<你的域名>.workers.dev/v1/audio/transcriptions \
 ### 🔧 稳定性
 - 长文本自动分块并行合成，突破单次请求限制
 - 内置重试机制（429 限频 / 5xx 服务端错误自动重试）
-- 单文件 100MB 上限，日主题切换流畅
+- 单文件 100MB 上限
 - 生成历史 / 转录历史自动保存至 localStorage
 
 ---
@@ -244,6 +290,9 @@ TTS-STT/
 │   ├── template.html        # 完整前端 (HTML + CSS + JS)
 │   ├── worker.js             # Cloudflare Worker 后端逻辑
 │   └── worker_base.js        # 旧版 Worker（参考）
+├── screenshots/
+│   ├── demo-tts.png          # TTS 界面截图
+│   └── demo-stt.png          # STT 界面截图
 ├── build.js                  # 构建脚本（内联 HTML → Worker）
 ├── index.js                  # 构建产物（单文件 Worker）
 ├── package.json              # 项目配置
@@ -271,7 +320,6 @@ npm run deploy
 npx wrangler secret put SILICONFLOW_TOKEN
 
 # 多环境部署
-npm run build
 npx wrangler deploy --env=production
 npx wrangler deploy --env=staging
 ```
@@ -286,4 +334,7 @@ MIT © Shiran
 
 <p align="center">
   <sub>Made with ❤️ by Shiran</sub>
+  <br>
+  <a href="https://tts.shy2958779577.workers.dev">demo</a> ·
+  <a href="https://github.com/shiranzby/TTS-STT">GitHub</a>
 </p>
